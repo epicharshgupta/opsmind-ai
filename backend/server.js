@@ -1,12 +1,21 @@
 const express = require("express");
+const mongoose = require("mongoose");
+require("dotenv").config();
+const uploadRoute = require("./routes/uploadRoute");
+
 const app = express();
 
 app.use(express.json());
 
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log("MongoDB Connected"))
+.catch(err => console.log(err));
+
 app.get("/", (req, res) => {
-  res.send("OpsMind AI Backend Running");
+  res.send("Backend Running");
 });
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+app.listen(process.env.PORT, () => {
+  console.log("Server running");
 });
+app.use("/api", uploadRoute);
