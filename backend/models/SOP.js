@@ -5,7 +5,7 @@ const sopSchema = new mongoose.Schema({
   filepath: String,
   text: String,
 chunks: [String],
-
+embeddings: [[Number]],
   uploadedAt: {
     type: Date,
     default: Date.now
