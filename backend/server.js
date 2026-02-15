@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const uploadRoute = require("./routes/uploadRoute");
+const searchRoute = require("./routes/searchRoute");
 
 const app = express();
 
@@ -19,3 +20,4 @@ app.listen(process.env.PORT, () => {
   console.log("Server running");
 });
 app.use("/api", uploadRoute);
+app.use("/api", searchRoute);
