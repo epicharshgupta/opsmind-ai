@@ -4,6 +4,8 @@ const sopSchema = new mongoose.Schema({
   filename: String,
   filepath: String,
   text: String,
+chunks: [String],
+
   uploadedAt: {
     type: Date,
     default: Date.now
