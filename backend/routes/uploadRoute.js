@@ -3,17 +3,20 @@ const router = express.Router();
 const upload = require("../multerConfig");
 const SOP = require("../models/SOP");
 const extractText = require("../utils/extractText");
+const chunkText = require("../utils/chunkText");
 
 router.post("/upload", upload.single("file"), async (req, res) => {
   try {
     // PDF se text extract karo
     const extractedText = await extractText(req.file.path);
+    const chunks = chunkText(extractedText);
 
     // DB me save karo
     const newFile = new SOP({
       filename: req.file.filename,
       filepath: req.file.path,
-      text: extractedText
+      text: extractedText,
+      chunks: chunks
     });
 
     await newFile.save();
