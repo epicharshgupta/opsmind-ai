@@ -8,16 +8,26 @@ const generateEmbedding = require("../utils/generateEmbedding");
 
 router.post("/upload", upload.single("file"), async (req, res) => {
   try {
-    // PDF se text extract karo
-    const extractedText = await extractText(req.file.path);
-    const chunks = chunkText(extractedText);
-    const embeddings = [];
 
+    // Check file uploaded or not
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    // Extract text from PDF
+    const extractedText = await extractText(req.file.path);
+
+    // Chunk text
+    const chunks = chunkText(extractedText);
+
+    // Generate embeddings
+    const embeddings = [];
     for (let chunk of chunks) {
       const embedding = await generateEmbedding(chunk);
       embeddings.push(embedding);
     }
-    // DB me save karo
+
+    // Save to DB
     const newFile = new SOP({
       filename: req.file.filename,
       filepath: req.file.path,
@@ -28,9 +38,12 @@ router.post("/upload", upload.single("file"), async (req, res) => {
 
     await newFile.save();
 
-    res.json({ message: "File uploaded + text extracted successfully" });
+    res.json({
+      message: "File uploaded, text extracted & embeddings saved"
+    });
 
   } catch (error) {
+    console.error("Upload error:", error);
     res.status(500).json({ error: error.message });
   }
 });
