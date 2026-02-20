@@ -4,9 +4,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const uploadRoute = require("./routes/uploadRoute");
 const searchRoute = require("./routes/searchRoute");
-
+const cors = require("cors");
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI)
