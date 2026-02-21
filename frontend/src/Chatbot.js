@@ -8,7 +8,7 @@ function Chatbot() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dark, setDark] = useState(false);
-
+  const [category, setCategory] = useState("");
   const chatEndRef = useRef(null);
 
   const sendMessage = async () => {
@@ -22,16 +22,21 @@ function Chatbot() {
     try {
       const res = await axios.post(
         "http://localhost:5000/api/search",
-        { query }
+        {
+          query,
+          category
+        }
       );
 
       const botMsg = {
         role: "bot",
-        text: res.data.answer
+        text: res.data.answer,
+        citation: res.data.citation || null
       };
 
       setMessages(prev => [...prev, botMsg]);
     } catch (err) {
+      console.error(err);
       setMessages(prev => [
         ...prev,
         { role: "bot", text: "Error getting response." }
@@ -47,14 +52,14 @@ function Chatbot() {
 
   return (
     <div className={dark ? "app-layout dark" : "app-layout"}>
-      
+
       {/* Sidebar */}
       <aside className="sidebar">
         <h2>OpsMind AI</h2>
         <ul>
-          <li>HR SOP</li>
-          <li>Finance SOP</li>
-          <li>Tech SOP</li>
+          <li onClick={() => setCategory("HR")}>HR SOP</li>
+          <li onClick={() => setCategory("Finance")}>Finance SOP</li>
+          <li onClick={() => setCategory("Tech")}>Tech SOP</li>
         </ul>
 
         <button
@@ -75,13 +80,17 @@ function Chatbot() {
 
           <div className="chat-body">
             {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`message ${msg.role}`}
-              >
-                <ReactMarkdown>
-                  {msg.text}
-                </ReactMarkdown>
+              <div key={i} className={`message ${msg.role}`}>
+                
+                <ReactMarkdown>{msg.text}</ReactMarkdown>
+
+                {/* Citation Display */}
+                {msg.citation && (
+                  <div className="citation">
+                    📄 {msg.citation.document} | Page {msg.citation.page}
+                  </div>
+                )}
+
               </div>
             ))}
 
