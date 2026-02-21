@@ -15,15 +15,13 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     }
 
     // Extract text from PDF
-    const extractedText = await extractText(req.file.path);
-
-    // Chunk text
-    const chunks = chunkText(extractedText);
+    const extractedPages = await extractText(req.file.path);
+    const chunks = chunkText(extractedPages);
 
     // Generate embeddings
     const embeddings = [];
     for (let chunk of chunks) {
-      const embedding = await generateEmbedding(chunk);
+      const embedding = await generateEmbedding(chunk.text);
       embeddings.push(embedding);
     }
 
@@ -31,7 +29,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     const newFile = new SOP({
       filename: req.file.filename,
       filepath: req.file.path,
-      text: extractedText,
+      text: extractedPages.map(p => p.text).join("\n"),
       chunks: chunks,
       embeddings: embeddings
     });
