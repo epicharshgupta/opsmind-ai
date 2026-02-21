@@ -162,3 +162,9 @@
 .dark .chat-section {
   background: #020617;
 }
+.citation {
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.7;
+  font-style: italic;
+}
