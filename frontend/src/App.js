@@ -1,7 +1,12 @@
 import Chatbot from "./Chatbot";
-
+import UploadSOP from "./UploadSOP";
 function App() {
-  return <Chatbot />;
+  return (
+    <>
+      <UploadSOP />
+      <Chatbot />
+    </>
+  );
 }
 
 export default App;
