@@ -3,7 +3,6 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 
 function Chat() {
-
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -11,28 +10,34 @@ function Chat() {
 
   const { user, logout } = useContext(AuthContext);
 
-  // Load history when button clicked
+  const userKey = user?.email || "guest";
+
+  // Load history on button click
   const loadChatHistory = () => {
-    const savedChats = localStorage.getItem(`chat_${user?.email}`);
+    const savedChats = localStorage.getItem(`chat_${userKey}`);
 
     if (savedChats) {
-      setMessages(JSON.parse(savedChats));
+      const parsed = JSON.parse(savedChats);
+      setMessages(parsed);
     } else {
       alert("No previous chats found");
     }
   };
 
-  // Save history
+  // Save history whenever messages change
   useEffect(() => {
-    if (user) {
-      localStorage.setItem(`chat_${user.email}`, JSON.stringify(messages));
+    if (messages.length > 0) {
+      localStorage.setItem(`chat_${userKey}`, JSON.stringify(messages));
     }
-  }, [messages, user]);
+  }, [messages, userKey]);
 
   const sendMessage = async () => {
     if (!query.trim()) return;
 
-    const userMessage = { role: "user", text: query };
+    const userMessage = {
+      role: "user",
+      text: query,
+    };
 
     setMessages((prev) => [...prev, userMessage]);
     setQuery("");
@@ -50,7 +55,6 @@ function Chat() {
       };
 
       setMessages((prev) => [...prev, botMessage]);
-
     } catch (error) {
       setMessages((prev) => [
         ...prev,
@@ -68,7 +72,7 @@ function Chat() {
 
   const clearChat = () => {
     setMessages([]);
-    localStorage.removeItem(`chat_${user?.email}`);
+    localStorage.removeItem(`chat_${userKey}`);
   };
 
   return (
@@ -100,7 +104,7 @@ function Chat() {
           >
             Clear Chat
           </button>
-&nbsp;&nbsp;
+
           <button
             onClick={logout}
             className="text-red-400 hover:text-red-600"
@@ -109,6 +113,7 @@ function Chat() {
           </button>
 
         </div>
+
       </div>
 
       {/* Chat Area */}
@@ -138,13 +143,12 @@ function Chat() {
                   📄 {msg.citation.document} | Page {msg.citation.page}
                 </div>
               )}
-
             </div>
           ))}
 
           {loading && (
-            <div className="bg-white shadow p-4 rounded-xl w-24">
-              Typing...
+            <div className="bg-white shadow p-4 rounded-xl w-28">
+              AI thinking...
             </div>
           )}
 
@@ -173,6 +177,7 @@ function Chat() {
         </div>
 
       </div>
+
     </div>
   );
 }
