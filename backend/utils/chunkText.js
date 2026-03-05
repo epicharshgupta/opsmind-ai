@@ -1,11 +1,29 @@
-function chunkText(text, chunkSize = 500) {
+function chunkText(pages) {
   const chunks = [];
-  let startIndex = 0;
+  const chunkSize = 1000;   // bigger chunks
+  const overlap = 200;      // better context continuity
 
-  while (startIndex < text.length) {
-    chunks.push(text.substring(startIndex, startIndex + chunkSize));
-    startIndex += chunkSize;
-  }
+  pages.forEach(page => {
+    const text = page.text;
+
+    let start = 0;
+
+    while (start < text.length) {
+      const chunk = text.substring(start, start + chunkSize).trim();
+
+      // Skip very small useless chunks
+      if (chunk.length > 150) {
+        chunks.push({
+          text: chunk,
+          page: page.page
+        });
+      }
+
+      start += chunkSize - overlap;
+    }
+  });
+
+  console.log("Total chunks created:", chunks.length);
 
   return chunks;
 }
