@@ -1,0 +1,84 @@
+body{
+margin:0;
+font-family:Inter, sans-serif;
+}
+
+/* navbar */
+
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 30px;
+background:#111827;
+color:white;
+}
+
+.nav-links a{
+color:white;
+margin-left:20px;
+text-decoration:none;
+}
+
+/* layout */
+
+.main{
+display:flex;
+height:calc(100vh - 60px);
+}
+
+/* sidebar */
+
+.sidebar{
+width:220px;
+background:#0f172a;
+color:white;
+padding:20px;
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+.sidebar a{
+color:white;
+text-decoration:none;
+}
+
+/* content */
+
+.content{
+flex:1;
+padding:40px;
+background:#f8fafc;
+}
+
+/* cards */
+
+.card{
+background:white;
+padding:40px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+width:400px;
+}
+
+/* landing */
+
+.landing{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+background:#0f172a;
+color:white;
+}
+
+.landing button{
+margin-top:20px;
+padding:12px 24px;
+background:#2563eb;
+border:none;
+color:white;
+border-radius:8px;
+}

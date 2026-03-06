@@ -1,10 +1,17 @@
 const fs = require("fs");
-const pdfParse = require("pdf-parse");
+const pdf = require("pdf-parse");
 
 async function extractText(filePath) {
-  const dataBuffer = fs.readFileSync(filePath);
-  const data = await pdfParse(dataBuffer);
-  return data.text;
+  const buffer = fs.readFileSync(filePath);
+  const data = await pdf(buffer);
+
+  // Split roughly page-wise (simple approach)
+  const pages = data.text.split("\f");
+
+  return pages.map((pageText, index) => ({
+    page: index + 1,
+    text: pageText.trim()
+  }));
 }
 
 module.exports = extractText;

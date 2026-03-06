@@ -1,68 +1,92 @@
 import { useState, useRef, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import API_BASE_URL from "../config/api";
 
 function Chat() {
+
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const chatEndRef = useRef(null);
 
   const { user, logout } = useContext(AuthContext);
 
   const userKey = user?.email || "guest";
 
-  // Load history on button click
+  // Load chat history
   const loadChatHistory = () => {
+
     const savedChats = localStorage.getItem(`chat_${userKey}`);
 
     if (savedChats) {
+
       const parsed = JSON.parse(savedChats);
       setMessages(parsed);
+
     } else {
+
       alert("No previous chats found");
+
     }
+
   };
 
-  // Save history whenever messages change
+  // Save chat history
   useEffect(() => {
+
     if (messages.length > 0) {
-      localStorage.setItem(`chat_${userKey}`, JSON.stringify(messages));
+
+      localStorage.setItem(
+        `chat_${userKey}`,
+        JSON.stringify(messages)
+      );
+
     }
+
   }, [messages, userKey]);
 
   const sendMessage = async () => {
+
     if (!query.trim()) return;
 
     const userMessage = {
       role: "user",
-      text: query,
+      text: query
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
+
     setQuery("");
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/search", {
-        query,
-      });
+
+      const res = await axios.post(
+        `${API_BASE_URL}/api/search`,
+        { query }
+      );
 
       const botMessage = {
         role: "bot",
         text: res.data.answer,
-        citation: res.data.citation,
+        citation: res.data.citation
       };
 
-      setMessages((prev) => [...prev, botMessage]);
+      setMessages(prev => [...prev, botMessage]);
+
     } catch (error) {
-      setMessages((prev) => [
+
+      setMessages(prev => [
         ...prev,
-        { role: "bot", text: "Error getting response." },
+        { role: "bot", text: "Error getting response." }
       ]);
+
     }
 
     setLoading(false);
+
   };
 
   // Auto scroll
@@ -70,15 +94,50 @@ function Chat() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Clear chat
   const clearChat = () => {
+
     setMessages([]);
     localStorage.removeItem(`chat_${userKey}`);
+
+  };
+
+  // Download chat
+  const downloadChat = () => {
+
+    if (!messages.length) {
+
+      alert("No chat to download");
+      return;
+
+    }
+
+    const chatText = messages
+      .map(msg => `${msg.role.toUpperCase()}: ${msg.text}`)
+      .join("\n\n");
+
+    const blob = new Blob(
+      [chatText],
+      { type: "text/plain" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "opsmind-chat-history.txt";
+
+    a.click();
+
   };
 
   return (
+
     <div className="flex h-screen bg-gray-100">
 
       {/* Sidebar */}
+
       <div className="w-64 bg-slate-900 text-white p-6 flex flex-col">
 
         <h2 className="text-2xl font-bold mb-10">
@@ -96,6 +155,13 @@ function Chat() {
           🕘 Chat History
         </button>
 
+        <button
+          onClick={downloadChat}
+          className="mb-4 text-left hover:text-blue-400"
+        >
+          ⬇ Download Chat
+        </button>
+
         <div className="mt-auto space-y-3">
 
           <button
@@ -104,7 +170,7 @@ function Chat() {
           >
             Clear Chat
           </button>
-
+&nbsp;&nbsp;&nbsp;&nbsp;
           <button
             onClick={logout}
             className="text-red-400 hover:text-red-600"
@@ -117,17 +183,21 @@ function Chat() {
       </div>
 
       {/* Chat Area */}
+
       <div className="flex flex-col flex-1">
 
         {/* Header */}
+
         <div className="bg-white shadow p-4 font-semibold">
           Enterprise SOP Assistant
         </div>
 
         {/* Messages */}
+
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
 
           {messages.map((msg, index) => (
+
             <div
               key={index}
               className={`max-w-xl p-4 rounded-xl ${
@@ -136,20 +206,29 @@ function Chat() {
                   : "bg-white shadow"
               }`}
             >
+
               <p>{msg.text}</p>
 
               {msg.citation && (
+
                 <div className="text-xs text-gray-500 mt-2">
+
                   📄 {msg.citation.document} | Page {msg.citation.page}
+
                 </div>
+
               )}
+
             </div>
+
           ))}
 
           {loading && (
+
             <div className="bg-white shadow p-4 rounded-xl w-28">
               AI thinking...
             </div>
+
           )}
 
           <div ref={chatEndRef}></div>
@@ -157,6 +236,7 @@ function Chat() {
         </div>
 
         {/* Input */}
+
         <div className="bg-white border-t p-4 flex">
 
           <input
@@ -179,6 +259,7 @@ function Chat() {
       </div>
 
     </div>
+
   );
 }
 

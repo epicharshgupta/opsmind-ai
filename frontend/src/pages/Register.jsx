@@ -1,38 +1,54 @@
-import { useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 
 function Register() {
-  const { login } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("user");
 
-  const handleRegister = () => {
-  if (!name || !email || !password) {
-    alert("All fields are required");
-    return;
-  }
+  const handleRegister = async () => {
 
-  const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
+    if (!name || !email || !password) {
+      alert("All fields are required");
+      return;
+    }
 
-  const userExists = existingUsers.find(user => user.email === email);
+    try {
 
-  if (userExists) {
-    alert("User already registered. Please login.");
-    return;
-  }
+      const res = await axios.post(
+        `${API_BASE_URL}/api/auth/register`,
+        {
+          name,
+          email,
+          password,
+          role
+        }
+      );
 
-  const newUser = { name, email, password };
+      alert(res.data.message);
 
-  localStorage.setItem("users", JSON.stringify([...existingUsers, newUser]));
+      navigate("/login");
 
-  alert("Registration successful! Please login.");
-};
+    } catch (error) {
+
+      alert(
+        error.response?.data?.message ||
+        "Registration failed"
+      );
+
+    }
+
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
+
       <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md">
 
         <h2 className="text-2xl font-bold mb-6 text-center">
@@ -43,6 +59,7 @@ function Register() {
           type="text"
           placeholder="Full Name"
           className="w-full border rounded-lg px-4 py-2 mb-4"
+          value={name}
           onChange={(e) => setName(e.target.value)}
         />
 
@@ -50,15 +67,27 @@ function Register() {
           type="email"
           placeholder="Email"
           className="w-full border rounded-lg px-4 py-2 mb-4"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
           type="password"
           placeholder="Password"
-          className="w-full border rounded-lg px-4 py-2 mb-6"
+          className="w-full border rounded-lg px-4 py-2 mb-4"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+
+        {/* Role Selection */}
+        <select
+          className="w-full border rounded-lg px-4 py-2 mb-6"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        >
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
 
         <button
           onClick={handleRegister}
@@ -69,12 +98,16 @@ function Register() {
 
         <p className="text-center mt-4 text-gray-600">
           Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 font-semibold">
+          <Link
+            to="/login"
+            className="text-blue-600 font-semibold"
+          >
             Login
           </Link>
         </p>
 
       </div>
+
     </div>
   );
 }

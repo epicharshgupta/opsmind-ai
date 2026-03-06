@@ -13,7 +13,18 @@ async function generateAnswer(question, context) {
           },
           {
             role: "user",
-            content: `Context:\n${context}\n\nQuestion:\n${question}`
+            content: `You are an enterprise AI assistant.
+
+Answer ONLY from the provided context below.
+If the answer is not explicitly present in the context,
+reply exactly with:
+"I don’t know based on the available documents."
+
+Context:
+${context}
+
+Question:
+${question}`
           }
         ]
       },

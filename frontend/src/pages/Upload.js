@@ -5,6 +5,7 @@ import Loader from "../components/Loader";
 import axios from "axios";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import API_BASE_URL from "../config/api";
 
 function Upload() {
   const { user } = useContext(AuthContext);
@@ -26,7 +27,7 @@ function Upload() {
     try {
       setLoading(true);
 
-      await axios.post("http://localhost:5000/api/upload", formData);
+      await axios.post(`${API_BASE_URL}/api/upload`, formData);
 
       setTimeout(() => {
         setLoading(false);

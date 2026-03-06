@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import "./Chatbot.css";
+import API_BASE_URL from "../config/api";
 
 function Chatbot() {
   const [query, setQuery] = useState("");
@@ -21,7 +22,7 @@ function Chatbot() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/search",
+        `${API_BASE_URL}/api/search`,
         {
           query,
           category
@@ -56,11 +57,7 @@ function Chatbot() {
       {/* Sidebar */}
       <aside className="sidebar">
         <h2>OpsMind AI</h2>
-        <ul>
-          <li onClick={() => setCategory("HR")}>HR SOP</li>
-          <li onClick={() => setCategory("Finance")}>Finance SOP</li>
-          <li onClick={() => setCategory("Tech")}>Tech SOP</li>
-        </ul>
+        
 
         <button
           className="toggle-btn"

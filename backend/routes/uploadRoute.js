@@ -31,7 +31,8 @@ router.post("/upload", upload.single("file"), async (req, res) => {
       filepath: req.file.path,
       text: extractedPages.map(p => p.text).join("\n"),
       chunks: chunks,
-      embeddings: embeddings
+      embeddings: embeddings,
+  uploadedBy: req.body.userId || null   // important
     });
 
     await newFile.save();

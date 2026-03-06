@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "../config/api";
 
 function UploadSOP() {
   const [file, setFile] = useState(null);
@@ -18,7 +19,7 @@ function UploadSOP() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/upload",
+        `${API_BASE_URL}/api/upload`,
         formData
       );
 
@@ -40,14 +41,7 @@ function UploadSOP() {
 
       <br /><br />
 
-      <select
-        value={category}
-        onChange={e => setCategory(e.target.value)}
-      >
-        <option>HR</option>
-        <option>Finance</option>
-        <option>Tech</option>
-      </select>
+      
 
       <br /><br />
 

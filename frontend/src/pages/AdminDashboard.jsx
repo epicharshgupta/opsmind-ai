@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "../config/api";
 
 function AdminDashboard() {
 
@@ -13,15 +14,15 @@ function AdminDashboard() {
 
     useEffect(() => {
 
-        axios.get("http://localhost:5000/api/admin/stats")
+        axios.get(`${API_BASE_URL}/api/admin/stats`)
             .then(res => setStats(res.data))
             .catch(err => console.log(err));
 
-        axios.get("http://localhost:5000/api/admin/users")
+        axios.get(`${API_BASE_URL}/api/admin/users`)
             .then(res => setUsers(res.data))
             .catch(err => console.log(err));
 
-        axios.get("http://localhost:5000/api/admin/documents")
+        axios.get(`${API_BASE_URL}/api/admin/documents`)
             .then(res => setDocuments(res.data))
             .catch(err => console.log(err));
 
